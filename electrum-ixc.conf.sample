@@ -6,7 +6,8 @@
 # that can be rewritten by the client
 
 [client]
-server = 192.168.0.115:50001:t
+server = ixcoin.electrum-alt.org:50001:t
+protocol = t
 proxy = None
 gap_limit = 5
 # booleans use python syntax

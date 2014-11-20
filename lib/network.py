@@ -7,7 +7,7 @@ from blockchain import Blockchain
 DEFAULT_PORTS = {'t':'50001', 's':'50002', 'h':'8081', 'g':'8082'}
 
 DEFAULT_SERVERS = {
-    '192.168.0.105':DEFAULT_PORTS,
+    'ixcoin.electrum-alt.org':DEFAULT_PORTS,
 }
 
 DISCONNECTED_RETRY_INTERVAL = 60
