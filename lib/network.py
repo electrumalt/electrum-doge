@@ -74,7 +74,8 @@ class Network(threading.Thread):
         self.blockchain = Blockchain(self.config, self)
         self.interfaces = {}
         self.queue = Queue.Queue()
-        self.protocol = self.config.get('protocol','s')
+        self.protocol = self.config.get('protocol','t')
+        print 'protocol', self.protocol
         self.running = False
 
         # Server for addresses and transactions
