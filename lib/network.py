@@ -7,7 +7,7 @@ from blockchain import Blockchain
 DEFAULT_PORTS = {'t':'50001', 's':'50002', 'h':'8081', 'g':'8082'}
 
 DEFAULT_SERVERS = {
-    '192.168.0.105':{'t':'50001'},
+    '192.168.0.105':DEFAULT_PORTS,
 }
 
 DISCONNECTED_RETRY_INTERVAL = 60
@@ -54,7 +54,7 @@ def filter_protocol(servers, p):
     return l
 
 
-def pick_random_server(p='s'):
+def pick_random_server(p='t'):
     return random.choice( filter_protocol(DEFAULT_SERVERS,p) )
 
 from simple_config import SimpleConfig
