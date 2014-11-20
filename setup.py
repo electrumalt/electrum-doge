@@ -77,7 +77,7 @@ setup(
         'electrum_ixc_gui': 'gui',
         'electrum_ixc_plugins': 'plugins',
     },
-    scripts=['electrum'],
+    scripts=['electrum-ixc'],
     data_files=data_files,
     py_modules=[
         'electrum_ixc.account',
