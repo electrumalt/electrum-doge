@@ -69,12 +69,13 @@ setup(
         'pyasn1-modules',
         'qrcode',
         'SocksiPy-branch',
-        'tlslite'
+        'tlslite',
+        'btcutils'
     ],
     package_dir={
-        'electrum': 'lib',
-        'electrum_gui': 'gui',
-        'electrum_plugins': 'plugins',
+        'electrum_ixc': 'lib',
+        'electrum_ixc_gui': 'gui',
+        'electrum_ixc_plugins': 'plugins',
     },
     scripts=['electrum'],
     data_files=data_files,
@@ -134,7 +135,7 @@ setup(
         'electrum_ixc_plugins.labels',
         'electrum_ixc_plugins.trezor',
         'electrum_ixc_plugins.virtualkeyboard',
-		'electrum_plugins.plot',
+		'electrum_ixc_plugins.plot',
     ],
     description="Lightweight Ixcoin Wallet",
     author="Thomas Voegtlin",
