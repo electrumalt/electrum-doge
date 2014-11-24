@@ -1,5 +1,4 @@
-** base58-encoded Ixcoin addresses.
-Public-key-hash-addresses have version 138 (or 111 testnet).
+Electrum-IXC - lightweight Ixcoin client
 
 Licence: GNU GPL v3
 Author: Thomas Voegtlin
