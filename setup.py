@@ -74,7 +74,8 @@ setup(
         'qrcode',
         'SocksiPy-branch',
         'tlslite',
-        'btcutils'
+        'btcutils',
+        'ltc_scrypt'
     ],
     package_dir={
         'electrum_doge': 'lib',
@@ -102,6 +103,7 @@ setup(
         'electrum_doge.paymentrequest_pb2',
         'electrum_doge.plugins',
         'electrum_doge.qrscanner',
+        'electrum_doge.scrypt',
         'electrum_doge.simple_config',
         'electrum_doge.synchronizer',
         'electrum_doge.transaction',

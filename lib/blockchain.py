@@ -24,10 +24,21 @@ from bitcoin import *
 
 from transaction import BCDataStream
 
+try:
+    from ltc_scrypt import getPoWHash as PoWHash
+except ImportError:
+    print_msg("Warning: ltc_scrypt not available, using fallback")
+    from scrypt import scrypt_1024_1_1_80 as PoWHash
+
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 max_target = 0x00000000FFFF0000000000000000000000000000000000000000000000000000
+
+# https://github.com/dogecoin/dogecoin/blob/65228644e10328172e9fa3ebe64251983e1153b3/src/core.h#L39
+auxpow_start = 371337
+# https://github.com/dogecoin/dogecoin/blob/master/src/main.cpp#L1253
+digishield_start = 145000
 
 class Blockchain(threading.Thread):
 
@@ -122,12 +133,13 @@ class Blockchain(threading.Thread):
             prev_hash = self.hash_header(prev_header)
             bits, target = self.get_target(height, chain)
             _hash = self.hash_header(header)
-            pow_hash = _hash
+            pow_hash = self.pow_hash_header(header)
 
             try:
-                if height >= 45000 and header['version'] == 196865:
+                # todo: dogecoin auxpow block version
+                if height >= auxpow_start and header['version'] == 196865:
                     assert auxpow.verify(_hash, auxpow.get_our_chain_id(), header['auxpow'])
-                    pow_hash = self.hash_header(header['auxpow']['parent_block'])
+                    pow_hash = self.pow_hash_header(header['auxpow']['parent_block'])
                 assert prev_hash == header.get('prev_block_hash')
                 assert bits == header.get('bits')
                 assert int('0x'+pow_hash,16) < target
@@ -174,8 +186,8 @@ class Blockchain(threading.Thread):
             disk_data += raw_header[0:80] # strip auxpow data
 
             header = self.header_from_string(raw_header)
-            _hash = self.hash_header(header)
-            _prev_hash = _hash
+            _hash = self.pow_hash_header(header)
+            _prev_hash = self.hash_header(header)
             header['block_height'] = height
 
             if (i == 0):
@@ -188,12 +200,19 @@ class Blockchain(threading.Thread):
                 header['auxpow'] = self.auxpow_from_string(auxpowdata[start:end].decode('hex'))
                 #print header['auxpow']
 
-            if height >= 20160 and (height % 144) == 0:
+            # dogecoin retargets: every 240 blocks (until digishield)
+            if (height % 240):
                 #print height , '%', 144 , '=', height % 144
                 bits, target = self.get_target(height, chain)
 
+            # after digishield, retarget at every block
+            if (height > digishield_start):
+                bits, target = self.get_target(height, chain)
 
-            if height >= 45000 and header['version'] == 196865: #TODO getAuxPowVersion()
+
+            # todo: auxpow header version for dogecoin
+            # auxpow starts after block 145000? for dogecoin
+            if height >= auxpow_start and header['version'] == 196865: #TODO getAuxPowVersion()
                 #todo: check that auxpow.get_chain_id(header) == auxpow.get_our_chain_id?
                 #print header['auxpow']
                 try:
@@ -206,7 +225,7 @@ class Blockchain(threading.Thread):
                     raise e
                 #pp.pprint(header)
                 #pp.pprint(parent_header)
-                _hash = self.hash_header(header['auxpow']['parent_block'])
+                _hash = self.pow_hash_header(header['auxpow']['parent_block'])
                 #print _hash
                 # todo: verify auxpow data
                 #_hash = '' # auxpow.getHash()
@@ -219,7 +238,7 @@ class Blockchain(threading.Thread):
                 print 'block ', height, ' failed validation'
                 raise e
 
-            if height % 144 == 0:
+            if height % 240 == 0:
                 print 'block ', height, ' validated'
 
             chain.append(header)
@@ -271,6 +290,9 @@ class Blockchain(threading.Thread):
             h['auxpow_offset'] = hex_to_int(s[80:84])
             h['auxpow_length'] = hex_to_int(s[84:88])
         return h
+
+    def pow_hash_header(self, header):
+        return rev_hex(PoWHash(self.header_to_string(header).decode('hex')).encode('hex'))
 
     def hash_header(self, header):
         return rev_hex(Hash(self.header_to_string(header).decode('hex')).encode('hex'))
@@ -332,25 +354,25 @@ class Blockchain(threading.Thread):
                 h = self.header_from_string(h)
                 return h
 
-    def get_dogecoin_target(self, height, chain=None):
+    def get_target(self, height, chain=None):
         if chain is None:
             chain = []  # Do not use mutables as default values!
 
-        nTargetTimespan = 24 * 60 * 60 #dogecoin: 144 blocks ever 24 hours
-        nInterval = 144
-        blockstogoback = nInterval
+        max_target = 0x00000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        if height == 0: return 0x1e0ffff0, 0x00000FFFF0000000000000000000000000000000000000000000000000000000
 
-        if (height >= 43000):
-            blockstogoback = nInterval + 1
+        nTargetTimespan = 4*60*60 #dogecoin: every 4 hours
+        nTargetTimespanNEW = 60 #dogecoin: every 1 minute
+        nTargetSpacing = 60 #dogecoin: 1 minute
+        nInterval = nTargetTimespan / nTargetSpacing #240
 
-        last_height = (height / 144) * 144 - 1
-        first_height = (height / 144) * 144 - blockstogoback
+        if height > digishield_start:
+            nInterval =  nTargetTimespanNEW / nTargetSpacing #1
+            nTargetTimespan = nTargetTimespanNEW
 
-        #print 'new target at... ' , height
-        #print 'first height: '
-        #print first_height
-        #print 'last height: '
-        #print last_height
+        latest_retarget_height = (height / nInterval) * nInterval
+        last_height = latest_retarget_height - 1
+        first_height = latest_retarget_height - nInterval
 
         first = self.read_header(first_height)
         last = self.read_header(last_height)
@@ -367,27 +389,23 @@ class Blockchain(threading.Thread):
 
         nActualTimespan = last.get('timestamp') - first.get('timestamp')
 
-        # https://github.com/FrictionlessCoin/dogecoin/blob/master/src/main.cpp#L1240
-        nTwoPercent = nTargetTimespan / 50
-        if nActualTimespan < nTargetTimespan:
-            #print 'smaller actual timespan'
-            if nActualTimespan < (nTwoPercent * 16):
-                #print 'a'
-                nActualTimespan = nTwoPercent * 45
-            elif nActualTimespan < (nTwoPercent * 32):
-                #print 'b'
-                nActualTimespan = nTwoPercent * 47
-            else:
-                #print 'c'
-                nActualTimespan = nTwoPercent * 49
-        elif nActualTimespan > (nTargetTimespan * 4):
-            #print 'd'
-            nActualTimespan = nTargetTimespan * 4
+        if height <= 5000:
+            nActualTimespan = max(nActualTimespan, nTargetTimespan/16)
+            nActualTimespan = min(nActualTimespan, nTargetTimespan*4)
+        elif height <= 10000:
+            nActualTimespan = max(nActualTimespan, nTargetTimespan/8)
+            nActualTimespan = min(nActualTimespan, nTargetTimespan*4)
+        elif height <= digishield_start:
+            nActualTimespan = max(nActualTimespan, nTargetTimespan/4)
+            nActualTimespan = min(nActualTimespan, nTargetTimespan*4)
+        # digishield
+        # https://github.com/dogecoin/dogecoin/blob/master/src/main.cpp#L1354
+        else:
+            nActualTimespan = nTargetTimespan + (nActualTimespan - nTargetTimespan)/8
+            nActualTimespan = max(nActualTimespan, nTargetTimespan - (nTargetTimespan/4))
+            nActualTimespan = min(nActualTimespan, nTargetTimespan + (nTargetTimespan/2))
 
-        return self.get_target_from_timespans(last.get('bits'), nActualTimespan, nTargetTimespan)
-
-    def get_target_from_timespans(self, bits, nActualTimespan, nTargetTimespan):
-
+        bits = last.get('bits')
         # convert to bignum
         MM = 256*256*256
         a = bits%MM
@@ -396,7 +414,11 @@ class Blockchain(threading.Thread):
         target = (a) * pow(2, 8 * (bits/MM - 3))
 
         # new target
-        new_target = min( max_target, (target * nActualTimespan)/nTargetTimespan )
+        #not sure about this, but it seems to work:
+        if height > digishield_start:
+            new_target = target
+        else:
+            new_target = min( max_target, (target * nActualTimespan)/nTargetTimespan )
 
         # convert it to bits
         c = ("%064X"%new_target)[2:]
@@ -406,44 +428,12 @@ class Blockchain(threading.Thread):
             i -= 1
 
         c = int('0x'+c[0:6],16)
-        if c >= 0x800000:
+        if c >= 0x800000: 
             c /= 256
             i += 1
 
         new_bits = c + MM * i
-
-        #print 'new bits: ', hex(new_bits)
-        #print 'new target: ', hex(new_target)
         return new_bits, new_target
-
-
-    def get_target(self, height, chain=None):
-        if chain is None:
-            chain = []  # Do not use mutables as default values!
-
-        # Dogecoin: target changes every 144 blocks after block 20160
-        # https://github.com/FrictionlessCoin/dogecoin/blob/master/src/main.cpp#L1196
-        if height >= 20160:
-            #print height , '%', 144 , '=', height % 144
-            return self.get_dogecoin_target(height, chain)
-
-        index = height / 2016
-
-        if index == 0: return 0x1d00ffff, max_target
-
-        first = self.read_header((index-1)*2016)
-        last = self.read_header(index*2016-1)
-        if last is None:
-            for h in chain:
-                if h.get('block_height') == index*2016-1:
-                    last = h
-
-        nActualTimespan = last.get('timestamp') - first.get('timestamp')
-        nTargetTimespan = 14*24*60*60
-        nActualTimespan = max(nActualTimespan, nTargetTimespan/4)
-        nActualTimespan = min(nActualTimespan, nTargetTimespan*4)
-
-        return self.get_target_from_timespans(last.get('bits'), nActualTimespan, nTargetTimespan)
 
 
     def request_header(self, i, h, queue):
