@@ -587,11 +587,11 @@ class Transaction:
         else:
             assert type == 'address'
         addrtype, hash_160 = bc_address_to_hash_160(addr)
-        if addrtype == 138:
+        if addrtype == 30:
             script = '76a9'                                      # op_dup, op_hash_160
             script += push_script(hash_160.encode('hex'))
             script += '88ac'                                     # op_equalverify, op_checksig
-        elif addrtype == 5:
+        elif addrtype == 22:
             script = 'a9'                                        # op_hash_160
             script += push_script(hash_160.encode('hex'))
             script += '87'                                       # op_equal

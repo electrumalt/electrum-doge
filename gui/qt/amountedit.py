@@ -77,7 +77,7 @@ class BTCAmountEdit(AmountEdit):
         if p == 5:
             return 'mDOGE'
         if p == 2:
-            return 'ibits'
+            return 'dbits'
         raise Exception('Unknown base unit')
 
     def get_amount(self):
