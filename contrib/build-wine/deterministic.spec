@@ -1,7 +1,7 @@
 # -*- mode: python -*-
 
 # We don't put these files in to actually include them in the script but to make the Analysis method scan them for imports
-a = Analysis(['electrum-ixc', 'gui/qt/main_window.py', 'gui/qt/lite_window.py', 'gui/text.py',
+a = Analysis(['electrum-doge', 'gui/qt/main_window.py', 'gui/qt/lite_window.py', 'gui/text.py',
               'lib/util.py', 'lib/wallet.py', 'lib/simple_config.py',
               'lib/bitcoin.py', 'lib/blockchain.py'
               ],
@@ -45,7 +45,7 @@ exe = EXE(pyz,
           a.scripts,
           a.binaries,
           a.datas,
-          name=os.path.join('build\\pyi.win32\\electrum-ixc', 'electrum-ixc.exe'),
+          name=os.path.join('build\\pyi.win32\\electrum-doge', 'electrum-doge.exe'),
           debug=False,
           strip=None,
           upx=False,

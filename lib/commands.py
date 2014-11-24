@@ -53,8 +53,8 @@ payto_options = ' --fee, -f: set transaction fee\n --fromaddr, -F: send from add
 listaddr_options = " -a: show all addresses, including change addresses\n -l: include labels in results"
 restore_options = " accepts a seed or master public key."
 mksendmany_syntax = 'mksendmanytx <recipient> <amount> [<recipient> <amount> ...]'
-payto_syntax = "payto <recipient> <amount> [label]\n<recipient> can be a ixcoin address or a label"
-paytomany_syntax = "paytomany <recipient> <amount> [<recipient> <amount> ...]\n<recipient> can be a ixcion address or a label"
+payto_syntax = "payto <recipient> <amount> [label]\n<recipient> can be a dogecoin address or a label"
+paytomany_syntax = "paytomany <recipient> <amount> [<recipient> <amount> ...]\n<recipient> can be a dogeion address or a label"
 signmessage_syntax = 'signmessage <address> <message>\nIf you want to lead or end a message with spaces, or want double spaces inside the message make sure you quote the string. I.e. " Hello  This is a weird String "'
 verifymessage_syntax = 'verifymessage <address> <signature> <message>\nIf you want to lead or end a message with spaces, or want double spaces inside the message make sure you quote the string. I.e. " Hello  This is a weird String "'
 
@@ -64,11 +64,11 @@ verifymessage_syntax = 'verifymessage <address> <signature> <message>\nIf you wa
 #                                                            requires_password
 register_command('contacts',             0, 0, False, True,  False, 'Show your list of contacts')
 register_command('create',               0, 0, False, True,  False, 'Create a new wallet')
-register_command('createmultisig',       2, 2, False, True,  False, 'similar to ixcoind\'s command')
-register_command('createrawtransaction', 2, 2, False, True,  False, 'similar to ixcoind\'s command')
+register_command('createmultisig',       2, 2, False, True,  False, 'similar to dogecoind\'s command')
+register_command('createrawtransaction', 2, 2, False, True,  False, 'similar to dogecoind\'s command')
 register_command('deseed',               0, 0, False, True,  False, 'Remove seed from wallet, creating a seedless, watching-only wallet.')
-register_command('decoderawtransaction', 1, 1, False, False, False, 'similar to ixcoind\'s command')
-register_command('getprivatekeys',       1, 1, False, True,  True,  'Get the private keys of a given address', 'getprivatekeys <ixcoin address>')
+register_command('decoderawtransaction', 1, 1, False, False, False, 'similar to dogecoind\'s command')
+register_command('getprivatekeys',       1, 1, False, True,  True,  'Get the private keys of a given address', 'getprivatekeys <dogecoin address>')
 register_command('dumpprivkeys',         0, 0, False, True,  True,  'Dump all private keys in your wallet')
 register_command('freeze',               1, 1, False, True,  True,  'Freeze the funds at one of your wallet\'s addresses', 'freeze <address>')
 register_command('getbalance',           0, 1, True,  True,  False, 'Return the balance of your wallet, or of one account in your wallet', 'getbalance [<account>]')
@@ -77,7 +77,7 @@ register_command('getversion',           0, 0, False, False, False, 'Return the 
 register_command('getaddressbalance',    1, 1, True,  False, False, 'Return the balance of an address', 'getaddressbalance <address>')
 register_command('getaddresshistory',    1, 1, True,  False, False, 'Return the transaction history of a wallet address', 'getaddresshistory <address>')
 register_command('getconfig',            1, 1, False, False, False, 'Return a configuration variable', 'getconfig <name>')
-register_command('getpubkeys',           1, 1, False, True,  False, 'Return the public keys for a wallet address', 'getpubkeys <ixcoin address>')
+register_command('getpubkeys',           1, 1, False, True,  False, 'Return the public keys for a wallet address', 'getpubkeys <dogecoin address>')
 register_command('getrawtransaction',    1, 1, True,  False, False, 'Retrieve a transaction', 'getrawtransaction <txhash>')
 register_command('getseed',              0, 0, False, True,  True,  'Print the generation seed of your wallet.')
 register_command('getmpk',               0, 0, False, True,  False, 'Return your wallet\'s master public key', 'getmpk')
@@ -245,7 +245,7 @@ class Commands:
         return self.network.get_servers()
 
     def getversion(self):
-        import electrum_ixc as electrum  # Needs to stay here to prevent ciruclar imports
+        import electrum_doge as electrum  # Needs to stay here to prevent ciruclar imports
         return electrum.ELECTRUM_VERSION
 
     def getmpk(self):
@@ -276,16 +276,16 @@ class Commands:
     def _mktx(self, outputs, fee = None, change_addr = None, domain = None):
         for to_address, amount in outputs:
             if not is_valid(to_address):
-                raise Exception("Invalid Ixcoin address", to_address)
+                raise Exception("Invalid Dogecoin address", to_address)
 
         if change_addr:
             if not is_valid(change_addr):
-                raise Exception("Invalid Ixcoin address", change_addr)
+                raise Exception("Invalid Dogecoin address", change_addr)
 
         if domain is not None:
             for addr in domain:
                 if not is_valid(addr):
-                    raise Exception("invalid Ixcoin address", addr)
+                    raise Exception("invalid Dogecoin address", addr)
 
                 if not self.wallet.is_mine(addr):
                     raise Exception("address not in wallet", addr)

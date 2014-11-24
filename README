@@ -1,9 +1,9 @@
-Electrum-IXC - lightweight Ixcoin client
+Electrum-DOGE - lightweight Dogecoin client
 
 Licence: GNU GPL v3
 Author: Thomas Voegtlin
 Language: Python
-Homepage: https://ixco.in/electrum
+Homepage: https://dogeo.in/electrum
 
 
 1. GETTING STARTED
@@ -11,13 +11,13 @@ Homepage: https://ixco.in/electrum
 
 To run Electrum from this directory, just do:
 
-  ./electrum-ixc
+  ./electrum-doge
 
 If you install Electrum on your system, you can run it from any
 directory:
 
   sudo python setup.py install
-  electrum-ixc
+  electrum-doge
 
 
 To start Electrum from your web browser, see
@@ -40,6 +40,6 @@ On Mac OS X:
   # On brew installs
   ARCHFLAGS="-arch i386 -arch x86_64" sudo python setup-release.py py2app --includes sip
 
-  sudo hdiutil create -fs HFS+ -volname "Electrum-IXC" -srcfolder dist/Electrum-IXC.app dist/electrum-ixc-VERSION-macosx.dmg
+  sudo hdiutil create -fs HFS+ -volname "Electrum-DOGE" -srcfolder dist/Electrum-DOGE.app dist/electrum-doge-VERSION-macosx.dmg
 
 

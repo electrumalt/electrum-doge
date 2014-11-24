@@ -332,11 +332,11 @@ class Blockchain(threading.Thread):
                 h = self.header_from_string(h)
                 return h
 
-    def get_ixcoin_target(self, height, chain=None):
+    def get_dogecoin_target(self, height, chain=None):
         if chain is None:
             chain = []  # Do not use mutables as default values!
 
-        nTargetTimespan = 24 * 60 * 60 #ixcoin: 144 blocks ever 24 hours
+        nTargetTimespan = 24 * 60 * 60 #dogecoin: 144 blocks ever 24 hours
         nInterval = 144
         blockstogoback = nInterval
 
@@ -367,7 +367,7 @@ class Blockchain(threading.Thread):
 
         nActualTimespan = last.get('timestamp') - first.get('timestamp')
 
-        # https://github.com/FrictionlessCoin/iXcoin/blob/master/src/main.cpp#L1240
+        # https://github.com/FrictionlessCoin/dogecoin/blob/master/src/main.cpp#L1240
         nTwoPercent = nTargetTimespan / 50
         if nActualTimespan < nTargetTimespan:
             #print 'smaller actual timespan'
@@ -421,11 +421,11 @@ class Blockchain(threading.Thread):
         if chain is None:
             chain = []  # Do not use mutables as default values!
 
-        # Ixcoin: target changes every 144 blocks after block 20160
-        # https://github.com/FrictionlessCoin/iXcoin/blob/master/src/main.cpp#L1196
+        # Dogecoin: target changes every 144 blocks after block 20160
+        # https://github.com/FrictionlessCoin/dogecoin/blob/master/src/main.cpp#L1196
         if height >= 20160:
             #print height , '%', 144 , '=', height % 144
-            return self.get_ixcoin_target(height, chain)
+            return self.get_dogecoin_target(height, chain)
 
         index = height / 2016
 
@@ -504,7 +504,7 @@ class Blockchain(threading.Thread):
         n = min_index
         while n < max_index + 1:
             print_error( "Requesting chunk:", n )
-            # todo: ixcoin get_auxblock_chunk after block 45000...?
+            # todo: dogecoin get_auxblock_chunk after block 45000...?
             # todo: call blockchain.block.get_auxblock from verify_chunk instead?
             i.send_request({'method':'blockchain.block.get_chunk', 'params':[n]}, queue)
             r = self.retrieve_request(queue)
@@ -525,7 +525,7 @@ class Blockchain(threading.Thread):
 
         return True
 
-# START electrum-ixc-server
+# START electrum-doge-server
 # the following code was copied from the server's utils.py file
 def tx_from_string(s):
     vds = BCDataStream()
@@ -579,7 +579,7 @@ def hex_to_int(s):
 
 
 def header_from_string(s):
-    #OK ixcoin todo: include auxpow position in auxpow file (offset(s))
+    #OK dogecoin todo: include auxpow position in auxpow file (offset(s))
     res = {
         'version': hex_to_int(s[0:4]),
         'prev_block_hash': hash_encode(s[4:36]),
@@ -594,6 +594,6 @@ def header_from_string(s):
         res['auxpow_length'] = hex_to_int(s[84:88])
 
     return res
-# END electrum-ixc-server
+# END electrum-doge-server
 
 

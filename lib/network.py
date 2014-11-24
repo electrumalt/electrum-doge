@@ -4,10 +4,10 @@ from bitcoin import *
 import interface
 from blockchain import Blockchain
 
-DEFAULT_PORTS = {'t':'50001', 's':'50002', 'h':'8081', 'g':'8082'}
+DEFAULT_PORTS = {'t':'50101', 's':'50102', 'h':'8181', 'g':'8182'}
 
 DEFAULT_SERVERS = {
-    'ixcoin.electrum-alt.org':DEFAULT_PORTS,
+    'dogecoin.electrum-alt.org':DEFAULT_PORTS,
 }
 
 DISCONNECTED_RETRY_INTERVAL = 60

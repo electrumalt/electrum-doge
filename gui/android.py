@@ -22,9 +22,9 @@
 from __future__ import absolute_import
 import android
 
-from electrum_ixc import SimpleConfig, Wallet, WalletStorage, format_satoshis, mnemonic_encode, mnemonic_decode
-from electrum_ixc.bitcoin import is_valid
-from electrum_ixc import util
+from electrum_doge import SimpleConfig, Wallet, WalletStorage, format_satoshis, mnemonic_encode, mnemonic_decode
+from electrum_doge.bitcoin import is_valid
+from electrum_doge import util
 from decimal import Decimal
 import datetime, re
 
@@ -166,7 +166,7 @@ def make_layout(s, scrollable = False):
 
         <TextView
           android:id="@+id/textElectrum"
-          android:text="Electrum-IXC"
+          android:text="Electrum-DOGE"
           android:textSize="7pt"
           android:textColor="#ff4444ff"
           android:gravity="left"
@@ -453,7 +453,7 @@ def pay_to(recipient, amount, fee, label):
     else:
         password = None
 
-    droid.dialogCreateSpinnerProgress("Electrum-IXC", "signing transaction...")
+    droid.dialogCreateSpinnerProgress("Electrum-DOGE", "signing transaction...")
     droid.dialogShow()
 
     try:
@@ -487,7 +487,7 @@ def make_new_contact():
     if r:
         data = r['extras']['SCAN_RESULT']
         if data:
-            if re.match('^ixcoin:', data):
+            if re.match('^dogecoin:', data):
                 address, _, _, _, _ = util.parse_URI(data)
             elif is_valid(data):
                 address = data
@@ -561,7 +561,7 @@ def main_loop():
                 if receive_addr:
                     amount = modal_input('Amount', 'Amount you want receive. ', '', "numberDecimal")
                     if amount:
-                        receive_addr = 'ixcoin:%s?amount=%s'%(receive_addr, amount)
+                        receive_addr = 'dogecoin:%s?amount=%s'%(receive_addr, amount)
 
                 if not receive_addr:
                     out = None
@@ -595,7 +595,7 @@ def payto_loop():
                 amount = droid.fullQueryDetail('amount').result.get('text')
 
                 if not is_valid(recipient):
-                    modal_dialog('Error','Invalid Ixcoin address')
+                    modal_dialog('Error','Invalid Dogecoin address')
                     continue
 
                 try:
@@ -1009,7 +1009,7 @@ class ElectrumGui:
     def restore_wallet(self):
 
         msg = "recovering wallet..."
-        droid.dialogCreateSpinnerProgress("Electrum-IXC", msg)
+        droid.dialogCreateSpinnerProgress("Electrum-DOGE", msg)
         droid.dialogShow()
 
         wallet.restore(lambda x: None)

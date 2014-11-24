@@ -2,12 +2,12 @@
 
 import sys
 import time
-import electrum_ixc as electrum
+import electrum_doge as electrum
 
 try:
     addr = sys.argv[1]
 except Exception:
-    print "usage: watch_address <ixcoin_address>"
+    print "usage: watch_address <dogecoin_address>"
     sys.exit(1)
 
 # start network

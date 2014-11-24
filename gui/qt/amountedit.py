@@ -73,9 +73,9 @@ class BTCAmountEdit(AmountEdit):
         p = self.decimal_point()
         assert p in [2, 5, 8]
         if p == 8:
-            return 'IXC'
+            return 'DOGE'
         if p == 5:
-            return 'mIXC'
+            return 'mDOGE'
         if p == 2:
             return 'ibits'
         raise Exception('Unknown base unit')

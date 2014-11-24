@@ -39,15 +39,15 @@ __builtin__.use_local_modules = is_local or is_android
 # load local module as electrum
 if __builtin__.use_local_modules:
     import imp
-    imp.load_module('electrum_ixc', *imp.find_module('lib'))
-    imp.load_module('electrum_ixc_gui', *imp.find_module('gui'))
+    imp.load_module('electrum_doge', *imp.find_module('lib'))
+    imp.load_module('electrum_doge_gui', *imp.find_module('gui'))
 
 
-from electrum_ixc import util
-from electrum_ixc import SimpleConfig, Network, Wallet, WalletStorage, NetworkProxy, Commands, known_commands, pick_random_server
-from electrum_ixc.util import print_msg, print_stderr, print_json, set_verbosity
-from electrum_ixc.daemon import get_daemon
-from electrum_ixc.plugins import init_plugins
+from electrum_doge import util
+from electrum_doge import SimpleConfig, Network, Wallet, WalletStorage, NetworkProxy, Commands, known_commands, pick_random_server
+from electrum_doge.util import print_msg, print_stderr, print_json, set_verbosity
+from electrum_doge.daemon import get_daemon
+from electrum_doge.plugins import init_plugins
 
 
 
@@ -72,7 +72,7 @@ def arg_parser():
     parser = optparse.OptionParser(usage=usage, add_help_option=False)
     parser.add_option("-h", "--help", action="callback", callback=print_help_cb, help="show this help text")
     parser.add_option("-g", "--gui", dest="gui", help="User interface: qt, lite, gtk, text or stdio")
-    parser.add_option("-w", "--wallet", dest="wallet_path", help="wallet path (default: electrum-ixc.dat)")
+    parser.add_option("-w", "--wallet", dest="wallet_path", help="wallet path (default: electrum-doge.dat)")
     parser.add_option("-o", "--offline", action="store_true", dest="offline", default=False, help="remain offline")
     parser.add_option("-d", "--daemon", action="store_true", dest="daemon", default=False, help="use daemon")
     parser.add_option("-C", "--concealed", action="store_true", dest="concealed", default=False, help="don't echo seed to console when restoring")
@@ -98,8 +98,8 @@ def arg_parser():
 
 def print_help(parser):
     parser.print_help()
-    print_msg("Type 'electrum-ixc help <command>' to see the help for a specific command")
-    print_msg("Type 'electrum-ixc --help' to see the list of options")
+    print_msg("Type 'electrum-doge help <command>' to see the help for a specific command")
+    print_msg("Type 'electrum-doge --help' to see the list of options")
     run_command(known_commands['help'])
 
 
@@ -190,7 +190,7 @@ if __name__ == '__main__':
         if gui_name in ['lite', 'classic']:
             gui_name = 'qt'
         try:
-            gui = __import__('electrum_ixc_gui.' + gui_name, fromlist=['electrum_ixc_gui'])
+            gui = __import__('electrum_doge_gui.' + gui_name, fromlist=['electrum_doge_gui'])
         except ImportError:
             traceback.print_exc(file=sys.stdout)
             sys.exit()

@@ -17,13 +17,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import sys, time, datetime, re, threading
-from electrum_ixc.i18n import _
-from electrum_ixc.util import print_error, print_msg
+from electrum_doge.i18n import _
+from electrum_doge.util import print_error, print_msg
 import os.path, json, ast, traceback
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from electrum_ixc import DEFAULT_SERVERS, DEFAULT_PORTS
+from electrum_doge import DEFAULT_SERVERS, DEFAULT_PORTS
 
 from util import *
 
@@ -71,8 +71,8 @@ class NetworkDialog(QDialog):
         hbox.addWidget(l)
         hbox.addWidget(QLabel(status))
         hbox.addStretch(50)
-        msg = _("Electrum-IXC sends your wallet addresses to a single server, in order to receive your transaction history.") + "\n\n" \
-            + _("In addition, Electrum-IXC connects to several nodes in order to download block headers and find out the longest blockchain.") + " " \
+        msg = _("Electrum-DOGE sends your wallet addresses to a single server, in order to receive your transaction history.") + "\n\n" \
+            + _("In addition, Electrum-DOGE connects to several nodes in order to download block headers and find out the longest blockchain.") + " " \
             + _("This blockchain is used to verify the transactions sent by the address server.")
         hbox.addWidget(HelpButton(msg))
         vbox.addLayout(hbox)
@@ -102,8 +102,8 @@ class NetworkDialog(QDialog):
         self.autocycle_cb.setChecked(auto_connect)
         grid.addWidget(self.autocycle_cb, 0, 1)
         if not self.config.is_modifiable('auto_cycle'): self.autocycle_cb.setEnabled(False)
-        msg = _("If auto-connect is enabled, Electrum-IXC will always use a server that is on the longest blockchain.") + " " \
-            + _("If it is disabled, Electrum-IXC will warn you if your server is lagging.")
+        msg = _("If auto-connect is enabled, Electrum-DOGE will always use a server that is on the longest blockchain.") + " " \
+            + _("If it is disabled, Electrum-DOGE will warn you if your server is lagging.")
         grid.addWidget(HelpButton(msg), 0, 4)
         grid.addWidget(self.server_host, 0, 2, 1, 2)
         grid.addWidget(self.server_port, 0, 3)

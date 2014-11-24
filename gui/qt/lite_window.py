@@ -8,29 +8,29 @@ try:
     import PyQt4.QtCore as QtCore
 
 except ImportError:
-    print "You need to have PyQT installed to run Electrum-IXC in graphical mode."
+    print "You need to have PyQT installed to run Electrum-DOGE in graphical mode."
     print "If you have pip installed try 'sudo pip install pyqt' if you are on Debian/Ubuntu try 'sudo apt-get install python-qt4'."
     sys.exit(0)
 
 from decimal import Decimal as D
-from electrum_ixc.util import get_resource_path as rsrc
-from electrum_ixc.bitcoin import is_valid
-from electrum_ixc.i18n import _
+from electrum_doge.util import get_resource_path as rsrc
+from electrum_doge.bitcoin import is_valid
+from electrum_doge.i18n import _
 import decimal
 import json
 import os.path
 import random
 import re
 import time
-from electrum_ixc.wallet import Wallet, WalletStorage
+from electrum_doge.wallet import Wallet, WalletStorage
 import webbrowser
 import history_widget
 import receiving_widget
-from electrum_ixc import util
+from electrum_doge import util
 import datetime
 
-from electrum_ixc.version import ELECTRUM_VERSION as electrum_version
-from electrum_ixc.util import format_satoshis, age
+from electrum_doge.version import ELECTRUM_VERSION as electrum_version
+from electrum_doge.util import format_satoshis, age
 
 from main_window import ElectrumWindow
 import shutil
@@ -140,7 +140,7 @@ class MiniWindow(QDialog):
 
         # Bitcoin address code
         self.address_input = QLineEdit()
-        self.address_input.setPlaceholderText(_("Enter a Ixcoin address or contact"))
+        self.address_input.setPlaceholderText(_("Enter a Dogecoin address or contact"))
         self.address_input.setObjectName("address_input")
 
         self.address_input.setFocusPolicy(Qt.ClickFocus)
@@ -251,8 +251,8 @@ class MiniWindow(QDialog):
         show_hist = self.config.get("gui_show_receiving",False)
         self.toggle_receiving_layout(show_hist)
         
-        self.setWindowIcon(QIcon(":icons/electrum-ixc.png"))
-        self.setWindowTitle("Electrum-IXC")
+        self.setWindowIcon(QIcon(":icons/electrum-doge.png"))
+        self.setWindowTitle("Electrum-DOGE")
         self.setWindowFlags(Qt.Window|Qt.MSWindowsFixedSizeDialogHint)
         self.layout().setSizeConstraint(QLayout.SetFixedSize)
         self.setObjectName("main_window")
@@ -355,7 +355,7 @@ class MiniWindow(QDialog):
         self.amount_input_changed(self.amount_input.text())
 
     def set_balances(self, btc_balance):
-        """Set the ixcoin balance and update the amount label accordingly."""
+        """Set the dogecoin balance and update the amount label accordingly."""
         self.btc_balance = btc_balance
         quote_text = self.create_quote_text(btc_balance)
         if quote_text:
@@ -365,10 +365,10 @@ class MiniWindow(QDialog):
         unit = self.actuator.g.base_unit()
 
         self.balance_label.set_balance_text(amount, unit, quote_text)
-        self.setWindowTitle("Electrum-IXC %s - %s %s" % (electrum_version, amount, unit))
+        self.setWindowTitle("Electrum-DOGE %s - %s %s" % (electrum_version, amount, unit))
 
     def amount_input_changed(self, amount_text):
-        """Update the number of ixcoins displayed."""
+        """Update the number of dogecoins displayed."""
         self.check_button_status()
 
         try:
@@ -385,8 +385,8 @@ class MiniWindow(QDialog):
 
     def create_quote_text(self, btc_balance):
         """Return a string copy of the amount fiat currency the 
-        user has in ixcoins."""
-        from electrum_ixc.plugins import run_hook
+        user has in dogecoins."""
+        from electrum_doge.plugins import run_hook
         r = {}
         run_hook('get_fiat_balance_text', btc_balance, r)
         return r.get(0,'')
@@ -398,7 +398,7 @@ class MiniWindow(QDialog):
             self.amount_input.setText("")
 
     def check_button_status(self):
-        """Check that the ixcoin address is valid and that something
+        """Check that the dogecoin address is valid and that something
         is entered in the amount before making the send button clickable."""
         try:
             value = D(str(self.amount_input.text())) * (10**self.actuator.g.decimal_point)
@@ -502,7 +502,7 @@ class BalanceLabel(QLabel):
 
 
     def set_balance_text(self, amount, unit, quote_text):
-        """Set the amount of ixcoins in the gui."""
+        """Set the amount of dogecoins in the gui."""
         if self.state == self.SHOW_CONNECTING:
             self.state = self.SHOW_BALANCE
 
@@ -573,7 +573,7 @@ class ReceivePopup(QDialog):
         self.close()
 
     def setup(self, address):
-        label = QLabel(_("Copied your Ixcoin address to the clipboard!"))
+        label = QLabel(_("Copied your Dogecoin address to the clipboard!"))
         address_display = QLineEdit(address)
         address_display.setReadOnly(True)
         resize_line_edit_width(address_display, address)
@@ -583,7 +583,7 @@ class ReceivePopup(QDialog):
         main_layout.addWidget(address_display)
 
         self.setMouseTracking(True)
-        self.setWindowTitle("Electrum-IXC - " + _("Receive Ixcoin payment"))
+        self.setWindowTitle("Electrum-DOGE - " + _("Receive Dogecoin payment"))
         self.setWindowFlags(Qt.Window|Qt.FramelessWindowHint|
                             Qt.MSWindowsFixedSizeDialogHint)
         self.layout().setSizeConstraint(QLayout.SetFixedSize)
@@ -600,7 +600,7 @@ class ReceivePopup(QDialog):
 
 class MiniActuator:
     """Initialize the definitions relating to themes and 
-    sending/receiving ixcoins."""
+    sending/receiving dogecoins."""
     
     
     def __init__(self, main_window):
@@ -674,7 +674,7 @@ class MiniActuator:
         s.start()
         w = QDialog()
         w.resize(200, 70)
-        w.setWindowTitle('Electrum-IXC')
+        w.setWindowTitle('Electrum-DOGE')
         l = QLabel(_('Sending transaction, please wait.'))
         vbox = QVBoxLayout()
         vbox.addWidget(l)
@@ -690,12 +690,12 @@ class MiniActuator:
 
 
     def send(self, address, amount, parent_window):
-        """Send ixcoins to the target address."""
+        """Send dogecoins to the target address."""
         dest_address = self.fetch_destination(address)
 
         if dest_address is None or not is_valid(dest_address):
             QMessageBox.warning(parent_window, _('Error'), 
-                _('Invalid Ixcoin Address') + ':\n' + address, _('OK'))
+                _('Invalid Dogecoin Address') + ':\n' + address, _('OK'))
             return False
 
         amount = D(unicode(amount)) * (10*self.g.decimal_point)

@@ -1,10 +1,10 @@
 from PyQt4.QtGui import *
-from electrum_ixc.plugins import BasePlugin, hook
-from electrum_ixc.i18n import _
+from electrum_doge.plugins import BasePlugin, hook
+from electrum_doge.i18n import _
 
 
 import datetime
-from electrum_ixc.util import format_satoshis
+from electrum_doge.util import format_satoshis
 
 
 try:

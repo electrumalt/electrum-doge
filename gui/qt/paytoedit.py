@@ -22,7 +22,7 @@ from qrtextedit import ScanQRTextEdit
 
 import re
 from decimal import Decimal
-from electrum_ixc import bitcoin
+from electrum_doge import bitcoin
 
 RE_ADDRESS = '[1-9A-HJ-NP-Za-km-z]{26,}'
 RE_ALIAS = '(.*?)\s*\<([1-9A-HJ-NP-Za-km-z]{26,})\>'
@@ -237,6 +237,6 @@ class PayToEdit(ScanQRTextEdit):
 
     def qr_input(self):
         data = super(PayToEdit,self).qr_input()
-        if data.startswith("ixcoin:"):
+        if data.startswith("dogecoin:"):
             self.scan_f(data)
             # TODO: update fee

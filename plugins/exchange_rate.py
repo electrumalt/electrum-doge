@@ -9,10 +9,10 @@ import threading
 import time
 import re
 from decimal import Decimal
-from electrum_ixc.plugins import BasePlugin, hook
-from electrum_ixc.i18n import _
-from electrum_ixc_gui.qt.util import *
-from electrum_ixc_gui.qt.amountedit import AmountEdit
+from electrum_doge.plugins import BasePlugin, hook
+from electrum_doge.i18n import _
+from electrum_doge_gui.qt.util import *
+from electrum_doge_gui.qt.amountedit import AmountEdit
 
 
 EXCHANGES = ["BitcoinAverage",
@@ -52,7 +52,7 @@ class Exchanger(threading.Thread):
     def get_json(self, site, get_string):
         try:
             connection = httplib.HTTPSConnection(site)
-            connection.request("GET", get_string, headers={"User-Agent":"Electrum-IXC"})
+            connection.request("GET", get_string, headers={"User-Agent":"Electrum-DOGE"})
         except Exception:
             raise
         resp = connection.getresponse()

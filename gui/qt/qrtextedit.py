@@ -1,4 +1,4 @@
-from electrum_ixc.i18n import _
+from electrum_doge.i18n import _
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -52,7 +52,7 @@ class ScanQRTextEdit(QRTextEdit):
 
 
     def qr_input(self):
-        from electrum_ixc import qrscanner
+        from electrum_doge import qrscanner
         try:
             data = qrscanner.scan_qr(self.win.config)
         except BaseException, e:

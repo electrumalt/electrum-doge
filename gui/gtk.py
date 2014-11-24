@@ -24,18 +24,18 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GObject, cairo
 from decimal import Decimal
-from electrum_ixc.util import print_error
-from electrum_ixc.bitcoin import is_valid
-from electrum_ixc import WalletStorage, Wallet
+from electrum_doge.util import print_error
+from electrum_doge.bitcoin import is_valid
+from electrum_doge import WalletStorage, Wallet
 
 Gdk.threads_init()
-APP_NAME = "Electrum-IXC"
+APP_NAME = "Electrum-DOGE"
 import platform
 MONOSPACE_FONT = 'Lucida Console' if platform.system() == 'Windows' else 'monospace'
 
-from electrum_ixc.util import format_satoshis, parse_URI
-from electrum_ixc.network import DEFAULT_SERVERS
-from electrum_ixc.bitcoin import MIN_RELAY_TX_FEE
+from electrum_doge.util import format_satoshis, parse_URI
+from electrum_doge.network import DEFAULT_SERVERS
+from electrum_doge.bitcoin import MIN_RELAY_TX_FEE
 
 def numbify(entry, is_int = False):
     text = entry.get_text().strip()
@@ -82,7 +82,7 @@ def restore_create_dialog():
 
     # ask if the user wants to create a new wallet, or recover from a seed. 
     # if he wants to recover, and nothing is found, do not create wallet
-    dialog = Gtk.Dialog("electrum-ixc", parent=None, 
+    dialog = Gtk.Dialog("electrum-doge", parent=None, 
                         flags=Gtk.DialogFlags.MODAL,
                         buttons= ("create", 0, "restore",1, "cancel",2)  )
 
@@ -253,7 +253,7 @@ def run_network_dialog( network, parent ):
         host_entry.set_text("Not Connected")
     host_entry.show()
     host_box.pack_start(host_entry, False, False, 10)
-    add_help_button(host_box, 'The name, port number and protocol of your Electrum-IXC server, separated by a colon. Example: "ecdsa.org:50002:s". Some servers allow you to connect through http (port 80) or https (port 443)')
+    add_help_button(host_box, 'The name, port number and protocol of your Electrum-DOGE server, separated by a colon. Example: "ecdsa.org:50002:s". Some servers allow you to connect through http (port 80) or https (port 443)')
     host_box.show()
 
     p_box = Gtk.HBox(False, 10)
@@ -457,7 +457,7 @@ class ElectrumWindow:
         self.num_zeros = int(self.config.get('num_zeros',0))
         self.window = Gtk.Window(Gtk.WindowType.TOPLEVEL)
         self.window.connect('key-press-event', self.on_key)
-        title = 'Electrum-IXC ' + self.wallet.electrum_version + '  -  ' + self.config.path
+        title = 'Electrum-DOGE ' + self.wallet.electrum_version + '  -  ' + self.config.path
         if not self.wallet.seed: title += ' [seedless]'
         self.window.set_title(title)
         self.window.connect("destroy", Gtk.main_quit)
@@ -783,7 +783,7 @@ class ElectrumWindow:
             to_address = r
 
         if not is_valid(to_address):
-            self.show_message( "invalid ixcoin address:\n"+to_address)
+            self.show_message( "invalid dogecoin address:\n"+to_address)
             return
 
         try:
@@ -810,7 +810,7 @@ class ElectrumWindow:
             self.show_message(str(e))
             return
 
-        #@todo ixcoin electrum-ltc modifies this...
+        #@todo dogecoin electrum-ltc modifies this...
         if tx.requires_fee(self.wallet.verifier) and fee < MIN_RELAY_TX_FEE:
             self.show_message( "This transaction requires a higher fee, or it will not be propagated by the network." )
             return
