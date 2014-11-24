@@ -39,7 +39,7 @@ class Blockchain(threading.Thread):
         self.lock = threading.Lock()
         self.local_height = 0
         self.running = False
-        self.headers_url = ''
+        self.headers_url = 'http://electrum-alt.org/ixcoin/blockchain_headers'
         self.set_local_height()
         self.queue = Queue.Queue()
 
@@ -278,6 +278,28 @@ class Blockchain(threading.Thread):
     def path(self):
         return os.path.join( self.config.path, 'blockchain_headers')
 
+    # the file hosted on the server has extra data to index auxpow data
+    # we need to remove that data to have 80 byte block headers instead of 88
+    def remove_auxpow_indexes(self, filename):
+        size = os.path.getsize(filename)
+        f = open(self.path(), 'wb+')
+        fa = open(filename, 'rb')
+
+        i = 0
+        j = 0
+        print size
+        while (i < size):
+            fa.seek(i)
+            f.seek(j)
+            chunk = fa.read(80)
+            f.write(chunk)
+            j += 80
+            i += 88
+
+        f.close()
+        fa.close()
+        #os.remove(filename)
+
     def init_headers_file(self):
         filename = self.path()
         if os.path.exists(filename):
@@ -287,7 +309,8 @@ class Blockchain(threading.Thread):
             import urllib, socket
             socket.setdefaulttimeout(30)
             print_error("downloading ", self.headers_url )
-            urllib.urlretrieve(self.headers_url, filename)
+            #urllib.urlretrieve(self.headers_url, filename + '_auxpow')
+            self.remove_auxpow_indexes(filename + '_auxpow')
             print_error("done.")
         except Exception:
             print_error( "download failed. creating file", filename )
