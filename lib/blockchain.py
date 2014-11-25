@@ -287,7 +287,6 @@ class Blockchain(threading.Thread):
 
         i = 0
         j = 0
-        print size
         while (i < size):
             fa.seek(i)
             f.seek(j)
@@ -532,9 +531,9 @@ class Blockchain(threading.Thread):
             i.send_request({'method':'blockchain.block.get_chunk', 'params':[n]}, queue)
             r = self.retrieve_request(queue)
 
-            print 'chunk compressed length : ', len(r)
+            #print 'chunk compressed length : ', len(r)
             r = zlib.decompress(r.decode('hex'))
-            print 'chunk uncompressed length : ', len(r)
+            #print 'chunk uncompressed length : ', len(r)
 
             try:
                 self.verify_chunk(n, r)
