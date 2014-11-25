@@ -298,7 +298,7 @@ class Blockchain(threading.Thread):
 
         f.close()
         fa.close()
-        #os.remove(filename)
+        os.remove(filename)
 
     def init_headers_file(self):
         filename = self.path()
@@ -308,12 +308,12 @@ class Blockchain(threading.Thread):
         try:
             import urllib, socket
             socket.setdefaulttimeout(30)
-            print_error("downloading ", self.headers_url )
-            #urllib.urlretrieve(self.headers_url, filename + '_auxpow')
+            print_error('downloading ', self.headers_url )
+            urllib.urlretrieve(self.headers_url, filename + '_auxpow')
             self.remove_auxpow_indexes(filename + '_auxpow')
             print_error("done.")
         except Exception:
-            print_error( "download failed. creating file", filename )
+            print_error( 'download failed. creating file', filename + '_auxpow' )
             open(filename,'wb+').close()
 
     def save_chunk(self, index, chunk):
