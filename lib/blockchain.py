@@ -50,7 +50,8 @@ class Blockchain(threading.Thread):
         self.lock = threading.Lock()
         self.local_height = 0
         self.running = False
-        self.headers_url = 'http://electrum-alt.org/ixcoin/blockchain_headers'
+        self.headers_url = ''
+        #self.headers_url = 'http://electrum-alt.org/dogecoin/blockchain_headers'
         self.set_local_height()
         self.queue = Queue.Queue()
 
@@ -201,7 +202,7 @@ class Blockchain(threading.Thread):
                 #print header['auxpow']
 
             # dogecoin retargets: every 240 blocks (until digishield)
-            if (height % 240):
+            if (height % 240 == 0):
                 #print height , '%', 144 , '=', height % 144
                 bits, target = self.get_target(height, chain)
 
@@ -377,9 +378,11 @@ class Blockchain(threading.Thread):
     def get_target(self, height, chain=None):
         if chain is None:
             chain = []  # Do not use mutables as default values!
+        print ''
+        print 'block', height
 
         max_target = 0x00000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        if height == 0: return 0x1e0ffff0, 0x00000FFFF0000000000000000000000000000000000000000000000000000000
+        if height < 240: return 0x1e0ffff0, 0x00000FFFF0000000000000000000000000000000000000000000000000000000
 
         nTargetTimespan = 4*60*60 #dogecoin: every 4 hours
         nTargetTimespanNEW = 60 #dogecoin: every 1 minute
@@ -390,10 +393,20 @@ class Blockchain(threading.Thread):
             nInterval =  nTargetTimespanNEW / nTargetSpacing #1
             nTargetTimespan = nTargetTimespanNEW
 
-        latest_retarget_height = (height / nInterval) * nInterval
-        last_height = latest_retarget_height - 1
-        first_height = latest_retarget_height - nInterval
+        print 'nTargetTimespan', nTargetTimespan
+        print 'nInterval', nInterval
 
+        blockstogoback = nInterval
+        if (height != nInterval):
+            blockstogoback = nInterval + 1
+
+        latest_retarget_height = (height / nInterval) * nInterval
+        print 'latest_retarget_height', latest_retarget_height
+        last_height = latest_retarget_height - 1
+        first_height = latest_retarget_height - blockstogoback
+
+        print 'first height', first_height
+        print 'last height', last_height
         first = self.read_header(first_height)
         last = self.read_header(last_height)
 
@@ -410,8 +423,8 @@ class Blockchain(threading.Thread):
         nActualTimespan = last.get('timestamp') - first.get('timestamp')
 
         if height <= 5000:
-            nActualTimespan = max(nActualTimespan, nTargetTimespan/16)
-            nActualTimespan = min(nActualTimespan, nTargetTimespan*4)
+            nActualTimespan = max(nActualTimespan, nTargetTimespan / 16)
+            nActualTimespan = min(nActualTimespan, nTargetTimespan * 4)
         elif height <= 10000:
             nActualTimespan = max(nActualTimespan, nTargetTimespan/8)
             nActualTimespan = min(nActualTimespan, nTargetTimespan*4)
@@ -421,9 +434,18 @@ class Blockchain(threading.Thread):
         # digishield
         # https://github.com/dogecoin/dogecoin/blob/master/src/main.cpp#L1354
         else:
+            #if (nModulatedTimespan < (retargetTimespan - (retargetTimespan/4)) ) 
+                #nModulatedTimespan = (retargetTimespan - (retargetTimespan/4));
+            #if (nModulatedTimespan > (retargetTimespan + (retargetTimespan/2)) ) 
+                #nModulatedTimespan = (retargetTimespan + (retargetTimespan/2));
+            print nTargetTimespan
+            print (nActualTimespan - nTargetTimespan)
             nActualTimespan = nTargetTimespan + (nActualTimespan - nTargetTimespan)/8
+            print nActualTimespan
             nActualTimespan = max(nActualTimespan, nTargetTimespan - (nTargetTimespan/4))
+            print nActualTimespan
             nActualTimespan = min(nActualTimespan, nTargetTimespan + (nTargetTimespan/2))
+            print nActualTimespan
 
         bits = last.get('bits')
         # convert to bignum
@@ -433,12 +455,14 @@ class Blockchain(threading.Thread):
             a *= 256
         target = (a) * pow(2, 8 * (bits/MM - 3))
 
+        new_target = min( max_target, (target * nActualTimespan)/nTargetTimespan )
+
         # new target
         #not sure about this, but it seems to work:
-        if height > digishield_start:
-            new_target = target
-        else:
-            new_target = min( max_target, (target * nActualTimespan)/nTargetTimespan )
+        #if height > digishield_start:
+            #new_target = target
+        #else:
+            #new_target = min( max_target, (target * nActualTimespan)/nTargetTimespan )
 
         # convert it to bits
         c = ("%064X"%new_target)[2:]
@@ -448,11 +472,13 @@ class Blockchain(threading.Thread):
             i -= 1
 
         c = int('0x'+c[0:6],16)
-        if c >= 0x800000: 
+        if c >= 0x800000:
             c /= 256
             i += 1
 
         new_bits = c + MM * i
+        print 'bits', hex(new_bits)
+        #print 'target', hex(new_target)
         return new_bits, new_target
 
 

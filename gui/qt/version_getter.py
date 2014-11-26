@@ -34,7 +34,7 @@ class VersionGetter(threading.Thread):
     def run(self):
         try:
             con = httplib.HTTPConnection('electrum-alt.org', 80, timeout=5)
-            con.request("GET", "/version?ixcoin")
+            con.request("GET", "/version?dogecoin")
             res = con.getresponse()
         except socket.error as msg:
             print_error("Could not retrieve version information")
