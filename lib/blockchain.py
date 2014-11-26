@@ -137,7 +137,7 @@ class Blockchain(threading.Thread):
 
             try:
                 # todo: dogecoin auxpow block version
-                if height >= auxpow_start and header['version'] == 196865:
+                if height >= auxpow_start and header['version'] == 6422786:
                     assert auxpow.verify(_hash, auxpow.get_our_chain_id(), header['auxpow'])
                     pow_hash = self.pow_hash_header(header['auxpow']['parent_block'])
                 assert prev_hash == header.get('prev_block_hash')
@@ -210,9 +210,7 @@ class Blockchain(threading.Thread):
                 bits, target = self.get_target(height, chain)
 
 
-            # todo: auxpow header version for dogecoin
-            # auxpow starts after block 145000? for dogecoin
-            if height >= auxpow_start and header['version'] == 196865: #TODO getAuxPowVersion()
+            if height >= auxpow_start and header['version'] == 6422786: #TODO getAuxPowVersion()
                 #todo: check that auxpow.get_chain_id(header) == auxpow.get_our_chain_id?
                 #print header['auxpow']
                 try:
