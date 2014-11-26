@@ -75,7 +75,6 @@ class Network(threading.Thread):
         self.interfaces = {}
         self.queue = Queue.Queue()
         self.protocol = self.config.get('protocol','t')
-        print 'protocol', self.protocol
         self.running = False
 
         # Server for addresses and transactions
