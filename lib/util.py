@@ -13,6 +13,9 @@ class MyEncoder(json.JSONEncoder):
             return obj.as_dict()
         return super(MyEncoder, self).default(obj)
 
+# integer division in Python returns the floor of the result instead of truncating towards zero like C
+def cdiv(x, y):
+    return int(float(x) / float(y))
 
 def set_verbosity(b):
     global is_verbose

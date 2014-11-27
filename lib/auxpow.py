@@ -5,7 +5,8 @@ import btcutils
 BLOCK_VERSION_CHAIN_START = (1 << 16)
 
 def get_our_chain_id():
-    return 0x0003 #dogecoin
+    #https://github.com/dogecoin/dogecoin/blob/65228644e10328172e9fa3ebe64251983e1153b3/src/core.h#L38
+    return 0x0062 #dogecoin
 
 def get_chain_id(header):
     return header['version'] / BLOCK_VERSION_CHAIN_START
