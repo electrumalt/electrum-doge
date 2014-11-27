@@ -30,8 +30,7 @@ from network import Network
 from util import print_error, print_stderr, parse_json
 from simple_config import SimpleConfig
 
-DAEMON_PORT=8001
-
+DAEMON_PORT=8003
 
 def do_start_daemon(config):
     import subprocess
