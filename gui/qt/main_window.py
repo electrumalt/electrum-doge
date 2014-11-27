@@ -534,9 +534,9 @@ class ElectrumWindow(QMainWindow):
     def create_history_menu(self, position):
         self.history_list.selectedIndexes()
         item = self.history_list.currentItem()
-        be = self.config.get('block_explorer', 'Blockchain.info')
-        if be == 'Blockchain.info':
-            block_explorer = 'https://blockchain.info/tx/'
+        be = self.config.get('block_explorer', 'Dogechain.info')
+        if be == 'Dogechain.info':
+            block_explorer = 'https://dogechain.info/tx/'
         elif be == 'Blockr.io':
             block_explorer = 'https://blockr.io/tx/info/'
         elif be == 'Insight.is':
