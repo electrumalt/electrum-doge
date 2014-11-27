@@ -200,9 +200,6 @@ class Blockchain(threading.Thread):
                 header['auxpow'] = self.auxpow_from_string(auxpowdata[start:end].decode('hex'))
                 #print header['auxpow']
 
-            if (height == 145002):
-                pp.pprint(header)
-
             chain.append(header)
 
             # dogecoin retargets: every 240 blocks (until digishield)
@@ -381,8 +378,6 @@ class Blockchain(threading.Thread):
     def get_target(self, height, chain=None):
         if chain is None:
             chain = []  # Do not use mutables as default values!
-        print ''
-        print 'block', height
 
         max_target = 0x00000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
         if height < 240: return 0x1e0ffff0, 0x00000FFFF0000000000000000000000000000000000000000000000000000000
@@ -487,7 +482,6 @@ class Blockchain(threading.Thread):
 
         new_bits = c + MM * i
 
-        print 'bits: ', hex(new_bits)
         #print 'new target: ', hex(new_target)
         return new_bits, new_target
 
