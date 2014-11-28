@@ -1,9 +1,9 @@
 Electrum-DOGE - lightweight Dogecoin client
 
 Licence: GNU GPL v3
-Author: Thomas Voegtlin
+Author: Electrum-DOGE contributors & Thomas Voegtlin
 Language: Python
-Homepage: https://dogeo.in/electrum
+Homepage: https://electrum-alt.org
 
 
 1. GETTING STARTED
@@ -18,12 +18,6 @@ directory:
 
   sudo python setup.py install
   electrum-doge
-
-
-To start Electrum from your web browser, see
-http://electrum.org/bitcoin_URIs.html
-
-
 
 2. HOW OFFICIAL PACKAGES ARE CREATED
 ------------------------------------
