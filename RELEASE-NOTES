@@ -1,3 +1,18 @@
+# Release 2.2
+
+ * Fixed block header synchronization bug
+
+ * Enabled translations
+
+ * Fixed exchange rate plugin
+
+ * Fixed block explorers list to only include Doge
+   explorers.
+
+# Release 2.1
+
+ * Ported from Electrum Bitcoin
+
 # Release 2.0
 
  * New address derivation (BIP39 + BIP32 + BIP44).
