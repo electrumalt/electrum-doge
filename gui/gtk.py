@@ -24,7 +24,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GObject, cairo
 from decimal import Decimal
-from electrum_doge.util import print_error
+from electrum_doge.util import print_error, InvalidPassword
 from electrum_doge.bitcoin import is_valid
 from electrum_doge import WalletStorage, Wallet
 
@@ -596,7 +596,7 @@ class ElectrumWindow:
 
             try:
                 wallet.get_seed(password)
-            except Exception:
+            except InvalidPassword:
                 show_message("Incorrect password")
                 return
 
