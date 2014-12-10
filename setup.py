@@ -10,6 +10,7 @@ import imp
 
 
 version = imp.load_source('version', 'lib/version.py')
+i18n = imp.load_source('i18n', 'lib/i18n.py')
 util = imp.load_source('util', 'lib/util.py')
 
 if sys.version_info[:3] < (2, 7, 0):
