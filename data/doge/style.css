@@ -2,6 +2,17 @@
   font-family: "Comic Sans MS";
 }
 
+/*MyTreeWidget {*/
+  /*background-color: #000;*/
+/*}*/
+
+#history_list {
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 #FAF2DB);
+  background-image: url(:/icons/dogebg.png);
+  background-repeat: no-repeat;
+  background-position: right bottom;
+}
+
 #main_window {
   background: qlineargradient(x1: 0, y1: 0, x2:0,y2:1, stop: 0 white , stop: 1 #E8E8E8);
 }

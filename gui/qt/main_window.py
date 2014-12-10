@@ -521,6 +521,7 @@ class ElectrumWindow(QMainWindow):
 
     def create_history_tab(self):
         self.history_list = l = MyTreeWidget(self)
+        self.history_list.setObjectName('history_list')
         l.setColumnCount(5)
         for i,width in enumerate(self.column_widths['history']):
             l.setColumnWidth(i, width)
