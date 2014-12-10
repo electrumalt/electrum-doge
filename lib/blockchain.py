@@ -223,7 +223,6 @@ class Blockchain(threading.Thread):
                     print 'auxpow failed verification'
                     pp.pprint(header['auxpow'])
                     raise e
-                #pp.pprint(header)
                 #pp.pprint(parent_header)
                 _hash = self.pow_hash_header(header['auxpow']['parent_block'])
                 #print _hash
@@ -341,6 +340,13 @@ class Blockchain(threading.Thread):
         f = open(filename,'rb+')
         f.seek(index*2016*80)
         h = f.write(chunk)
+        f.close()
+        self.set_local_height()
+
+    def erase_chunk(self, index):
+        filename = self.path()
+        f = open(filename,'rb+')
+        f.truncate(index*2016*80)
         f.close()
         self.set_local_height()
 
@@ -558,6 +564,7 @@ class Blockchain(threading.Thread):
             except Exception:
                 print traceback.format_exc()
                 print_error('Verify chunk failed!')
+                self.erase_chunk(n)
                 n = n - 1
                 if n < 0:
                     return False
