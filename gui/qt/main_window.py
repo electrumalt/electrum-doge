@@ -537,8 +537,8 @@ class ElectrumWindow(QMainWindow):
         be = self.config.get('block_explorer', 'Dogechain.info')
         if be == 'Dogechain.info':
             block_explorer = 'https://dogechain.info/tx/'
-        elif be == 'Blockr.io':
-            block_explorer = 'https://blockr.io/tx/info/'
+        elif be == 'Bkchain.org':
+            block_explorer = 'https://bkchain.org/doge/tx/'
         elif be == 'Insight.is':
             block_explorer = 'http://live.insight.is/tx/'
         elif be == "Blocktrail.com":
@@ -2640,11 +2640,11 @@ class ElectrumWindow(QMainWindow):
         unit_combo.currentIndexChanged.connect(on_unit)
         widgets.append((unit_label, unit_combo, unit_help))
 
-        block_explorers = ['Blockchain.info', 'Blockr.io', 'Insight.is', "Blocktrail.com"]
+        block_explorers = ['Dogechain.info', 'Bkchain.org']
         block_ex_label = QLabel(_('Online Block Explorer') + ':')
         block_ex_combo = QComboBox()
         block_ex_combo.addItems(block_explorers)
-        block_ex_combo.setCurrentIndex(block_explorers.index(self.config.get('block_explorer', 'Blockchain.info')))
+        block_ex_combo.setCurrentIndex(block_explorers.index(self.config.get('block_explorer', 'Dogechain.info')))
         block_ex_help = HelpButton(_('Choose which online block explorer to use for functions that open a web browser'))
         def on_be(x):
             be_result = block_explorers[block_ex_combo.currentIndex()]
