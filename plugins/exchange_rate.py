@@ -15,24 +15,27 @@ from electrum_doge_gui.qt.util import *
 from electrum_doge_gui.qt.amountedit import AmountEdit
 
 
-EXCHANGES = ["BitcoinAverage",
-             "BitcoinVenezuela",
-             "Bitcurex",
-             "Bitmarket",
-             "BitPay",
-             "Blockchain",
-             "BTCChina",
-             "CaVirtEx",
-             "Coinbase",
-             "CoinDesk",
-             "itBit",
-             "LocalBitcoins",
-             "Winkdex"]
+EXCHANGES = ["Bter",
+             #"BitcoinVenezuela",
+             #"Bitcurex",
+             #"Bitmarket",
+             #"BitPay",
+             #"Blockchain",
+             #"BTCChina",
+             #"CaVirtEx",
+             #"Coinbase",
+             #"CoinDesk",
+             #"itBit",
+             #"LocalBitcoins",
+             #"Winkdex"
+             ]
 
-EXCH_SUPPORT_HIST = [("CoinDesk", "USD"),
-                     ("Winkdex", "USD"),
-                     ("BitcoinVenezuela", "ARS"),
-                     ("BitcoinVenezuela", "VEF")]
+EXCH_SUPPORT_HIST = [
+                     #("CoinDesk", "USD"),
+                     #("Winkdex", "USD"),
+                     #("BitcoinVenezuela", "ARS"),
+                     #("BitcoinVenezuela", "VEF")
+                     ]
 
 class Exchanger(threading.Thread):
 
@@ -43,7 +46,7 @@ class Exchanger(threading.Thread):
         self.quote_currencies = None
         self.lock = threading.Lock()
         self.query_rates = threading.Event()
-        self.use_exchange = self.parent.config.get('use_exchange', "Blockchain")
+        self.use_exchange = self.parent.config.get('use_exchange', "Bter")
         self.parent.exchanges = EXCHANGES
         self.parent.win.emit(SIGNAL("refresh_exchanges_combo()"))
         self.parent.win.emit(SIGNAL("refresh_currencies_combo()"))
@@ -78,21 +81,21 @@ class Exchanger(threading.Thread):
         self.is_running = False
 
     def update_rate(self):
-        self.use_exchange = self.parent.config.get('use_exchange', "Blockchain")
+        self.use_exchange = self.parent.config.get('use_exchange', "Bter")
         update_rates = {
-            "BitcoinAverage": self.update_ba,
-            "BitcoinVenezuela": self.update_bv,
-            "Bitcurex": self.update_bx,
-            "Bitmarket": self.update_bm,
-            "BitPay": self.update_bp,
-            "Blockchain": self.update_bc,
-            "BTCChina": self.update_CNY,
-            "CaVirtEx": self.update_cv,
-            "CoinDesk": self.update_cd,
-            "Coinbase": self.update_cb,
-            "itBit": self.update_ib,
-            "LocalBitcoins": self.update_lb,
-            "Winkdex": self.update_wd,
+            "Bter": self.update_bter,
+            #"BitcoinVenezuela": self.update_bv,
+            #"Bitcurex": self.update_bx,
+            #"Bitmarket": self.update_bm,
+            #"BitPay": self.update_bp,
+            #"Blockchain": self.update_bc,
+            #"BTCChina": self.update_CNY,
+            #"CaVirtEx": self.update_cv,
+            #"CoinDesk": self.update_cd,
+            #"Coinbase": self.update_cb,
+            #"itBit": self.update_ib,
+            #"LocalBitcoins": self.update_lb,
+            #"Winkdex": self.update_wd,
         }
         try:
             update_rates[self.use_exchange]()
@@ -299,16 +302,14 @@ class Exchanger(threading.Thread):
         self.parent.set_currencies(quote_currencies)
 
 
-    def update_ba(self):
+    def update_bter(self):
         try:
-            jsonresp = self.get_json('api.bitcoinaverage.com', "/ticker/global/all")
+            jsonresp = self.get_json('data.bter.com', '/api/1/ticker/doge_usd')
         except Exception:
             return
         quote_currencies = {}
         try:
-            for r in jsonresp:
-                if not r == "timestamp":
-                    quote_currencies[r] = self._lookup_rate_ba(jsonresp, r)
+            quote_currencies['USD'] = jsonresp['last']
             with self.lock:
                 self.quote_currencies = quote_currencies
         except KeyError:
@@ -389,11 +390,11 @@ class Plugin(BasePlugin):
         self.get_fiat_price_text(r)
         quote = r.get(0)
         if quote:
-            price_text = "1 BTC~%s"%quote
+            price_text = "1 DOGE~%s"%quote
             fiat_currency = quote[-3:]
             btc_price = self.btc_rate
             fiat_balance = Decimal(btc_price) * (Decimal(btc_balance)/100000000)
-            balance_text = "(%.2f %s)" % (fiat_balance,fiat_currency)
+            balance_text = "(%.8f %s)" % (fiat_balance,fiat_currency)
             text = "  " + balance_text + "     " + price_text + " "
         r2[0] = text
 
@@ -406,7 +407,7 @@ class Plugin(BasePlugin):
         else:
             quote_balance = btc_balance * Decimal(cur_rate)
             self.btc_rate = cur_rate
-            quote_text = "%.2f %s" % (quote_balance, quote_currency)
+            quote_text = "%.6f %s" % (quote_balance, quote_currency)
         return quote_text
 
     @hook
