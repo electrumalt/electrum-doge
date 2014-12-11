@@ -45,12 +45,12 @@ exe = EXE(pyz,
           a.scripts,
           a.binaries,
           a.datas,
-          name=os.path.join('build\\pyi.win32\\electrum-doge', 'electrum-doge.exe'),
+          name=os.path.join('electrum-doge.exe'),
           debug=False,
           strip=None,
           upx=False,
           icon='icons/electrum.ico',
-          console=False)
+          console=True)
           # The console True makes an annoying black box pop up, but it does make Electrum output command line commands, with this turned off no output will be given but commands can still be used
 
 coll = COLLECT(exe,
@@ -61,5 +61,5 @@ coll = COLLECT(exe,
                upx=True,
                debug=False,
                icon='icons/electrum.ico',
-               console=False,
-               name=os.path.join('dist', 'electrum'))
+               console=True,
+               name='electrum-doge')
