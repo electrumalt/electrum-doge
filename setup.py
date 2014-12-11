@@ -148,6 +148,6 @@ setup(
     author="Thomas Voegtlin",
     author_email="thomasv1@gmx.de",
     license="GNU GPLv3",
-    url="https://electrum-alt.org",
+    url="https://electrum-doge.com",
     long_description="""Lightweight Dogecoin Wallet"""
 )

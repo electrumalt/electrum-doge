@@ -7,7 +7,7 @@ from blockchain import Blockchain
 DEFAULT_PORTS = {'t':'50101', 's':'50102', 'h':'8181', 'g':'8182'}
 
 DEFAULT_SERVERS = {
-    'dogecoin.electrum-alt.org':DEFAULT_PORTS,
+    'dogecoin.electrum-doge.com':DEFAULT_PORTS,
 }
 
 DISCONNECTED_RETRY_INTERVAL = 60

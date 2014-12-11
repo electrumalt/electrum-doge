@@ -6,7 +6,7 @@
 # that can be rewritten by the client
 
 [client]
-server = dogecoin.electrum-alt.org:50101:t
+server = dogecoin.electrum-doge.com:50101:t
 protocol = t
 proxy = None
 gap_limit = 5

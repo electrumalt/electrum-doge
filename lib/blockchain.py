@@ -50,7 +50,7 @@ class Blockchain(threading.Thread):
         self.lock = threading.Lock()
         self.local_height = 0
         self.running = False
-        self.headers_url = 'http://electrum-alt.org/dogecoin/blockchain_headers'
+        self.headers_url = 'http://electrum-doge.com/dogecoin/blockchain_headers'
         self.set_local_height()
         self.queue = Queue.Queue()
 
