@@ -63,7 +63,7 @@ else:
     data_files = []
 
 setup(
-    name="Electrum-DOGE",
+    name="Electrum-Doge",
     version=version.ELECTRUM_VERSION,
     install_requires=[
         'slowaes',

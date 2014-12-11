@@ -18,7 +18,7 @@ from lib.util import print_error
 from lib.version import ELECTRUM_VERSION as version
 
 
-name = "Electrum-DOGE"
+name = "Electrum-Doge"
 mainscript = 'electrum-doge'
 
 if sys.version_info[:3] < (2, 6, 0):
