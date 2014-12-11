@@ -33,7 +33,8 @@ except ImportError:
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-max_target = 0x00000000FFFF0000000000000000000000000000000000000000000000000000
+#max_target = 0x00000000FFFF0000000000000000000000000000000000000000000000000000
+max_target = 0x00000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 # https://github.com/dogecoin/dogecoin/blob/65228644e10328172e9fa3ebe64251983e1153b3/src/core.h#L39
 auxpow_start = 371337
@@ -235,6 +236,9 @@ class Blockchain(threading.Thread):
                 assert int('0x'+_hash,16) < target
             except Exception as e:
                 print 'block ', height, ' failed validation'
+                print previous_hash, '==', header.get('prev_block_hash')
+                print hex(bits), '==', hex(header.get('bits'))
+                print int('0x'+_hash,16), '<', target
                 raise e
 
             if height % 240 == 0:
@@ -385,11 +389,11 @@ class Blockchain(threading.Thread):
         if chain is None:
             chain = []  # Do not use mutables as default values!
 
-        max_target = 0x00000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
         if height < 240: return 0x1e0ffff0, 0x00000FFFF0000000000000000000000000000000000000000000000000000000
 
         nTargetTimespan = 4*60*60 #dogecoin: every 4 hours
         nTargetTimespanNEW = 60 #dogecoin: every 1 minute
+
         nTargetSpacing = 60 #dogecoin: 1 minute
         nInterval = nTargetTimespan / nTargetSpacing #240
 
@@ -407,12 +411,7 @@ class Blockchain(threading.Thread):
         latest_retarget_height = (height / retargetInterval) * retargetInterval
         #print 'latest_retarget_height', latest_retarget_height
         last_height = latest_retarget_height - 1
-        first_height = latest_retarget_height - blockstogoback - 1
-
-        #if (height == 145002):
-            #1b6558a4
-            #first_height = 144999
-            #last_height  = 145001
+        first_height = last_height - blockstogoback
 
         #print 'first height', first_height
         #print 'last height', last_height
@@ -434,10 +433,12 @@ class Blockchain(threading.Thread):
         nModulatedTimespan = nActualTimespan
 
         #print 'nActualTimespan', nActualTimespan
+        #print 'nTargetTimespan', nTargetTimespan
+        #print 'retargetTimespan', retargetTimespan
 
         if height <= 5000:
             nModulatedTimespan = max(nModulatedTimespan, cdiv(nTargetTimespan, 16))
-            nModulatedTimespan = min(nModulatedTimespan, nTargetTimespan * 4)
+            nModulatedTimespan = min(nModulatedTimespan, nTargetTimespan*4)
         elif height <= 10000:
             nModulatedTimespan = max(nModulatedTimespan, cdiv(nTargetTimespan, 8))
             nModulatedTimespan = min(nModulatedTimespan, nTargetTimespan*4)
@@ -447,12 +448,6 @@ class Blockchain(threading.Thread):
         # digishield
         # https://github.com/dogecoin/dogecoin/blob/master/src/main.cpp#L1354
         else:
-            #if (nModulatedTimespan < (retargetTimespan - (retargetTimespan/4)) ) 
-                #nModulatedTimespan = (retargetTimespan - (retargetTimespan/4));
-            #if (nModulatedTimespan > (retargetTimespan + (retargetTimespan/2)) ) 
-                #nModulatedTimespan = (retargetTimespan + (retargetTimespan/2));
-            #print retargetTimespan
-            # 60 + (48 - 60)/8
             nModulatedTimespan = retargetTimespan + cdiv(nModulatedTimespan - retargetTimespan, 8)
             nModulatedTimespan = max(nModulatedTimespan, retargetTimespan - cdiv(retargetTimespan, 4))
             nModulatedTimespan = min(nModulatedTimespan, retargetTimespan + cdiv(retargetTimespan, 2))
