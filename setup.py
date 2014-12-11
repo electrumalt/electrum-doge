@@ -30,8 +30,8 @@ if (len(sys.argv) > 1) and (sys.argv[1] == "install"):
             sys.exit("Error: cannot write to %s.\nIf you do not have root permissions, you may install Electrum in a virtualenv.\nAlso, please note that you can run Electrum without installing it on your system."%usr_share)
 
     data_files += [
-        (os.path.join(usr_share, 'applications/'), ['electrum-doge.desktop']),
-        (os.path.join(usr_share, 'app-install', 'icons/'), ['icons/electrum-doge.png'])
+        (os.path.join(usr_share, 'applications'), ['electrum-doge.desktop']),
+        (os.path.join(usr_share, 'app-install', 'icons'), ['icons/electrum-doge.png'])
     ]
     if not os.path.exists('locale'):
         os.mkdir('locale')
