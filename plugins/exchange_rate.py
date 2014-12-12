@@ -647,7 +647,7 @@ class Plugin(BasePlugin):
             return False
 
     def fiat_unit(self):
-        return self.config.get("currency", "EUR")
+        return self.config.get("currency", "USD")
 
     def add_fiat_edit(self):
         self.fiat_e = AmountEdit(self.fiat_unit)
