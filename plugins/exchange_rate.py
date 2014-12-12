@@ -333,13 +333,13 @@ class Plugin(BasePlugin):
         return "Exchange rates"
 
     def description(self):
-        return """exchange rates, retrieved from blockchain.info, CoinDesk, or Coinbase"""
+        return """exchange rates, retrieved from bter.com"""
 
 
     def __init__(self,a,b):
         BasePlugin.__init__(self,a,b)
         self.currencies = [self.fiat_unit()]
-        self.exchanges = [self.config.get('use_exchange', "Blockchain")]
+        self.exchanges = [self.config.get('use_exchange', "Bter")]
         self.exchanger = None
 
     @hook
@@ -400,7 +400,7 @@ class Plugin(BasePlugin):
 
     def create_fiat_balance_text(self, btc_balance):
         quote_currency = self.fiat_unit()
-        self.exchanger.use_exchange = self.config.get("use_exchange", "Blockchain")
+        self.exchanger.use_exchange = self.config.get("use_exchange", "Bter")
         cur_rate = self.exchanger.exchange(Decimal("1.0"), quote_currency)
         if cur_rate is None:
             quote_text = ""
@@ -419,7 +419,7 @@ class Plugin(BasePlugin):
             tx_list[tx_hash] = {'value': value, 'timestamp': timestamp, 'balance': balance}
 
         self.tx_list = tx_list
-        self.cur_exchange = self.config.get('use_exchange', "Blockchain")
+        self.cur_exchange = self.config.get('use_exchange', "Bter")
         threading.Thread(target=self.request_history_rates, args=()).start()
 
 
@@ -548,7 +548,7 @@ class Plugin(BasePlugin):
                 return
             if cur_request != self.fiat_unit():
                 self.config.set_key('currency', cur_request, True)
-                cur_exchange = self.config.get('use_exchange', "Blockchain")
+                cur_exchange = self.config.get('use_exchange', "Bter")
                 if (cur_exchange, cur_request) in EXCH_SUPPORT_HIST:
                     hist_checkbox.setEnabled(True)
                 else:
@@ -567,7 +567,7 @@ class Plugin(BasePlugin):
 
         def on_change_ex(x):
             cur_request = str(self.exchanges[x])
-            if cur_request != self.config.get('use_exchange', "Blockchain"):
+            if cur_request != self.config.get('use_exchange', "Bter"):
                 self.config.set_key('use_exchange', cur_request, True)
                 self.currencies = []
                 combo.clear()
@@ -592,7 +592,7 @@ class Plugin(BasePlugin):
                     self.win.history_list.setColumnWidth(i, width)
 
         def set_hist_check(hist_checkbox):
-            cur_exchange = self.config.get('use_exchange', "Blockchain")
+            cur_exchange = self.config.get('use_exchange', "Bter")
             hist_checkbox.setEnabled(cur_exchange in ["CoinDesk", "Winkdex", "BitcoinVenezuela"])
 
         def set_currencies(combo):
@@ -617,13 +617,13 @@ class Plugin(BasePlugin):
                 return
             combo_ex.addItems(self.exchanges)
             try:
-                index = self.exchanges.index(self.config.get('use_exchange', "Blockchain"))
+                index = self.exchanges.index(self.config.get('use_exchange', "Bter"))
             except Exception:
                 index = 0
             combo_ex.setCurrentIndex(index)
 
         def ok_clicked():
-            if self.config.get('use_exchange', "Blockchain") in ["CoinDesk", "itBit"]:
+            if self.config.get('use_exchange', "Bter") in ["CoinDesk", "itBit"]:
                 self.exchanger.query_rates.set()
             d.accept();
 
