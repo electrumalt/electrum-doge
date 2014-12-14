@@ -51,7 +51,7 @@ class Blockchain(threading.Thread):
         self.lock = threading.Lock()
         self.local_height = 0
         self.running = False
-        self.headers_url = 'http://electrum-doge.com/dogecoin/blockchain_headers'
+        self.headers_url = 'https://electrum-doge.com/dogecoin/blockchain_headers'
         self.set_local_height()
         self.queue = Queue.Queue()
 
@@ -121,11 +121,10 @@ class Blockchain(threading.Thread):
 
 
 
-
     def verify_chain(self, chain):
 
         first_header = chain[0]
-        prev_header = self.read_header(first_header.get('block_height') -1)
+        prev_header = self.read_header(first_header.get('block_height') - 1)
 
         for header in chain:
 
@@ -149,6 +148,8 @@ class Blockchain(threading.Thread):
                 print 'error validating chain at height ', height
                 print 'block ', height, '(',_hash,') failed validation'
                 pprint.pprint(header)
+                print hex(bits), '==', hex(header.get('bits'))
+                print int('0x'+pow_hash,16), '<', target
                 return False
 
             prev_header = header
@@ -347,6 +348,13 @@ class Blockchain(threading.Thread):
         f.close()
         self.set_local_height()
 
+    def truncate_headers(self, height):
+        filename = self.path()
+        f = open(filename,'rb+')
+        f.truncate(height*80)
+        f.close()
+        self.set_local_height()
+
     def erase_chunk(self, index):
         filename = self.path()
         f = open(filename,'rb+')
@@ -419,6 +427,11 @@ class Blockchain(threading.Thread):
         first = self.read_header(first_height)
         last = self.read_header(last_height)
 
+        #print 'first'
+        #print first
+        #print 'last'
+        #print last
+
         if first is None:
             for h in chain:
                 if h.get('block_height') == first_height:
@@ -431,10 +444,6 @@ class Blockchain(threading.Thread):
 
         nActualTimespan = last.get('timestamp') - first.get('timestamp')
         nModulatedTimespan = nActualTimespan
-
-        #print 'nActualTimespan', nActualTimespan
-        #print 'nTargetTimespan', nTargetTimespan
-        #print 'retargetTimespan', retargetTimespan
 
         if height <= 5000:
             nModulatedTimespan = max(nModulatedTimespan, cdiv(nTargetTimespan, 16))
@@ -452,8 +461,13 @@ class Blockchain(threading.Thread):
             nModulatedTimespan = max(nModulatedTimespan, retargetTimespan - cdiv(retargetTimespan, 4))
             nModulatedTimespan = min(nModulatedTimespan, retargetTimespan + cdiv(retargetTimespan, 2))
 
-        #print 'nModulatedTimespan', nModulatedTimespan
         bits = last.get('bits')
+
+        #print 'before', hex(bits)
+        #print 'nActualTimespan', nActualTimespan
+        #print 'nTargetTimespan', nTargetTimespan
+        #print 'retargetTimespan', retargetTimespan
+        #print 'nModulatedTimespan', nModulatedTimespan
 
         return self.get_target_from_timespans(bits, nModulatedTimespan, retargetTimespan)
 
@@ -527,6 +541,8 @@ class Blockchain(threading.Thread):
             prev_hash = self.hash_header(previous_header)
             if prev_hash != header.get('prev_block_hash'):
                 print_error("reorg")
+                # truncate headers file
+                self.truncate_headers(height - 2)
                 self.request_header(interface, height - 1, queue)
                 requested_header = True
                 continue
